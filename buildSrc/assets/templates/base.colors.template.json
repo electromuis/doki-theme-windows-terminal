@@ -1,0 +1,25 @@
+{
+  "name": "base",
+  "colors": {
+    "background": "&baseBackground&",
+    "selectionBackground": "&searchBackground&",
+    "foreground": "&foregroundColor&",
+
+    "black": "#0C0C0C",
+    "red": "&fileRed&",
+    "green": "#13A10E",
+    "yellow": "&fileYellow&",
+    "blue": "&fileBlue&",
+    "purple": "&filePurple&",
+    "cyan": "#3A96DD",
+    "white": "#CCCCCC",
+    "brightBlack": "#767676",
+    "brightRed": "#E74856",
+    "brightGreen": "#16C60C",
+    "brightYellow": "#F9F1A5",
+    "brightBlue": "#3B78FF",
+    "brightPurple": "#B4009E",
+    "brightCyan": "#61D6D6",
+    "brightWhite": "#F2F2F2"
+  }
+}

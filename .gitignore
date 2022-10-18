@@ -25,3 +25,6 @@ masterThemes/
 
 *.pyc
 .ipynb_checkpoints/
+
+
+generatedThemes/*

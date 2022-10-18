@@ -1,14 +1,6 @@
-The Doki Theme: <<App>>
+The Doki Theme: Windows Terminal
 ---
 
-## Quick Theme Preview
-
-![Themes](https://raw.githubusercontent.com/doki-theme/doki-theme-jupyter/main/readmeAssets/quick_theme_preview.webp)
-
-
-# [More Screenshots](https://github.com/doki-theme/doki-theme-jupyter/blob/main/albums/screenshot_album.md)
-
----
 
 # Documentation
 
@@ -20,11 +12,15 @@ The Doki Theme: <<App>>
     - [Helping the community](#enjoying-the-themes)
     - [Feature Requests](#contributions)
 
-# Installation 
+## Installation 
 
-# Usage
-
-# Miscellaneous
+1. Make sure you have Windows Terminal installed (https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701)
+1. Dowload the latest release of this repository
+1. Navitate to %LOCALAPPDATA% Microsoft\Windows Terminal\Fragments\Doki
+1. Copy Themes.json to the Doki folder
+1. Copy your favourite waifu from folder of the shell you prefer to the Doki folder
+1. Launch Windows Terminal
+1. Set the Default Profile under settings
 
 ## Contributing
 
@@ -43,7 +39,7 @@ Be sure to ⭐ and share it with other weebs!
 
 ## Contributions?
 
-I think your voice needs to be heard! You probably have good ideas, so feel free to submit your feedback as [an issue](https://github.com/doki-theme/doki-theme-jupyter/issues/new).
+I think your voice needs to be heard! You probably have good ideas, so feel free to submit your feedback as [an issue](https://github.com/doki-theme/doki-theme-windows-terminal/issues/new).
 
 Help make this plugin better!
 

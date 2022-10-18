@@ -6,143 +6,155 @@ import {
   MasterDokiThemeDefinition,
   resolvePaths,
   StringDictionary,
+  dictionaryReducer,
+  resolveNamedColors,
+  applyNamedColors,
+  composeTemplate,
+  NAMED_COLOR_TYPE,
+  walkDir,
+  readJson
 } from "doki-build-source";
-import omit from 'lodash/omit';
+import path from 'path';
 import fs from "fs";
-import path from "path";
 
-type AppDokiThemeDefinition = BaseAppDokiThemeDefinition;
+const glob = require("glob");
 
 const {
   repoDirectory,
   masterThemeDefinitionDirectoryPath,
+  appDefinitionDirectoryPath,
+  appTemplatesDirectoryPath
 } = resolvePaths(__dirname);
 
-// todo: dis
-type DokiThemeJupyter = {
-  [k: string]: any;
+type WindowsTerminalDokiThemeDefinition = BaseAppDokiThemeDefinition;
+
+type WindowsTerminalDokiTheme = {
+  path: string;
+  definition: MasterDokiThemeDefinition;
+  theme: any;
 };
 
-
-function buildTemplateVariables(
-  dokiThemeDefinition: MasterDokiThemeDefinition,
-  masterTemplateDefinitions: DokiThemeDefinitions,
-  dokiThemeAppDefinition: AppDokiThemeDefinition,
-): DokiThemeJupyter {
-  const namedColors: StringDictionary<string> = constructNamedColorTemplate(
-    dokiThemeDefinition,
-    masterTemplateDefinitions
+const swapMasterThemeForLocalTheme = (
+  masterDokiThemeDefinitionPath: string
+): string => {
+  const masterThemeFilePath = masterDokiThemeDefinitionPath.substring(
+    masterThemeDefinitionDirectoryPath.toString().length
   );
-  const colorsOverride =
-    dokiThemeAppDefinition.overrides.theme?.colors || {};
-  const cleanedColors = Object.entries(namedColors)
-    .reduce((accum, [colorName, colorValue]) => ({
-      ...accum,
-      [colorName]: colorValue,
-    }), {});
+  return `${appDefinitionDirectoryPath}${masterThemeFilePath}`;
+};
+
+function buildWindowsTerminalTheme(
+  dokiMasterThemeDefinition: MasterDokiThemeDefinition,
+  dokiThemeDefinitions: DokiThemeDefinitions,
+  dokiWindowsTerminalThemeDefinition: WindowsTerminalDokiThemeDefinition,
+  masterDokiThemeDefinitions: DokiThemeDefinitions,
+) {
+
+  const lafTemplate = dokiThemeDefinitions[NAMED_COLOR_TYPE].base.colors
+  const color1 = resolveNamedColors(dokiThemeDefinitions, dokiMasterThemeDefinition)
+
   return {
-    ...cleanedColors,
-    ...colorsOverride,
-  };
+    name: dokiMasterThemeDefinition.name,
+    ...applyNamedColors(lafTemplate, color1)
+  }
 }
 
 function createDokiTheme(
-  masterThemeDefinitionPath: string,
-  masterThemeDefinition: MasterDokiThemeDefinition,
-  appTemplateDefinitions: DokiThemeDefinitions,
-  appThemeDefinition: AppDokiThemeDefinition,
-  masterTemplateDefinitions: DokiThemeDefinitions,
-) {
+  dokiFileDefinitionPath: string,
+  dokiMasterThemeDefinition: MasterDokiThemeDefinition,
+  dokiThemeDefinitions: DokiThemeDefinitions,
+  dokiWindowsTerminalThemeDefinition: WindowsTerminalDokiThemeDefinition,
+  masterDokiThemeDefinitions: DokiThemeDefinitions,
+): WindowsTerminalDokiTheme {
   try {
     return {
-      path: masterThemeDefinitionPath,
-      definition: masterThemeDefinition,
-      stickers: getStickers(masterThemeDefinition, masterThemeDefinitionPath),
-      templateVariables: buildTemplateVariables(
-        masterThemeDefinition,
-        masterTemplateDefinitions,
-        appThemeDefinition,
+      path: swapMasterThemeForLocalTheme(dokiFileDefinitionPath),
+      definition: dokiMasterThemeDefinition,
+      theme: buildWindowsTerminalTheme(
+        dokiMasterThemeDefinition,
+        dokiThemeDefinitions,
+        dokiWindowsTerminalThemeDefinition,
+        masterDokiThemeDefinitions
       ),
-      theme: {},
-      appThemeDefinition: appThemeDefinition,
     };
   } catch (e) {
+    console.error(e);
     throw new Error(
-      `Unable to build ${masterThemeDefinition.name}'s theme for reasons ${e}`
+      `Unable to build ${dokiMasterThemeDefinition.name}'s theme for reasons ${e}`
     );
   }
 }
 
-function resolveStickerPath(themeDefinitionPath: string, sticker: string) {
-  const stickerPath = path.resolve(
-    path.resolve(themeDefinitionPath, ".."),
-    sticker
-  );
-  return stickerPath.substr(
-    masterThemeDefinitionDirectoryPath.length + "/definitions".length
-  );
+function ThemeShellConfig(shellConfig: any, t: WindowsTerminalDokiTheme) {
+  const background = t.definition.stickers.default;
+  return {
+    ...shellConfig,
+    name: shellConfig.name + ' - ' + t.definition.name,
+    backgroundImage: "https://doki.assets.unthrottled.io/backgrounds/" + background.name,
+    backgroundImageAlignment: background.anchor,
+    backgroundImageStretchMode: 'fill',
+    backgroundImageOpacity: 1 - (background.opacity / 100),
+    colorScheme: t.definition.name
+  }
 }
 
-const getStickers = (
-  dokiDefinition: MasterDokiThemeDefinition,
-  themePath: string
-) => {
-  const secondary =
-    dokiDefinition.stickers.secondary || dokiDefinition.stickers.normal;
-  return {
-    default: {
-      path: resolveStickerPath(themePath, dokiDefinition.stickers.default),
-      name: dokiDefinition.stickers.default,
-    },
-    ...(secondary
-      ? {
-        secondary: {
-          path: resolveStickerPath(themePath, secondary),
-          name: secondary,
-        },
-      }
-      : {}),
-  };
-};
+console.log('Preparing to generate themes.');
 
-console.log("Preparing to generate themes.");
-const themesDirectory = path.resolve(repoDirectory, "src", "dokithemejupyter");
-
-evaluateTemplates(
+evaluateTemplates<WindowsTerminalDokiThemeDefinition, WindowsTerminalDokiTheme>(
   {
-    appName: 'jupyter',
+    appName: 'windowsTerminal',
     currentWorkingDirectory: __dirname,
   },
   createDokiTheme
-)
-  .then((dokiThemes) => {
+).then(dokiThemes => {
+  fs.writeFileSync(
+    path.resolve(
+      repoDirectory,
+      "generatedThemes",
+      'Themes.json'
+    ),
+    JSON.stringify({
+      schemes: dokiThemes.map(d => d.theme)
+    }, null, 2)
+  )
 
-    // write things for extension
-    const dokiThemeDefinitions = dokiThemes
-      .map((dokiTheme) => {
-        const dokiDefinition = dokiTheme.definition;
-        return {
-          information: omit(dokiDefinition, [
-            "colors",
-            "overrides",
-            "ui",
-            "icons",
-          ]),
-          colors: dokiTheme.appThemeDefinition.colors,
-          stickers: dokiTheme.stickers,
-        };
+  walkDir(appTemplatesDirectoryPath).then(dirs => {
+    dirs
+    .filter(d => d.endsWith('.shell.json'))
+    .forEach(d => {
+      const shellConfig = readJson<any>(d)
+      const shellConfigPath = path.resolve(
+        repoDirectory,
+        "generatedThemes",
+        shellConfig.name
+      )
+
+      if (!fs.existsSync(shellConfigPath)){
+          fs.mkdirSync(shellConfigPath);
+      }
+
+      dokiThemes.forEach(t => {
+
+        fs.writeFileSync(
+          path.resolve(
+            repoDirectory,
+            "generatedThemes",
+            shellConfig.name,
+            t.definition.name + '.json'
+          ),
+          JSON.stringify({
+            profiles: {
+              list: [ThemeShellConfig(shellConfig, t)]
+            }
+          }, null, 2)
+        )
+
       })
-      .reduce((accum: StringDictionary<any>, definition) => {
-        accum[definition.information.id] = definition;
-        return accum;
-      }, {});
-    const finalDokiDefinitions = JSON.stringify(dokiThemeDefinitions);
-    fs.writeFileSync(
-      path.resolve(repoDirectory, "src", "DokiThemeDefinitions.ts"),
-      `export default ${finalDokiDefinitions};`
-    );
+    })
+  })
+  
 
   })
   .then(() => {
-    console.log("Theme Generation Complete!");
+    console.log('Theme Generation Complete!');
   });
