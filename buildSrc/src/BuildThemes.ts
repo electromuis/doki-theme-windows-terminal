@@ -87,14 +87,26 @@ function createDokiTheme(
 
 function ThemeShellConfig(shellConfig: any, t: WindowsTerminalDokiTheme) {
   const background = t.definition.stickers.default;
+
+  const assetRoot = "https://doki.assets.unthrottled.io"
+
+  const stickerPath = path
+    .resolve(t.path, '..')
+    .substring(appDefinitionDirectoryPath.length + '\definitions'.length + 1)
+
+  console.log(stickerPath)
+
   return {
     ...shellConfig,
     name: shellConfig.name + ' - ' + t.definition.name,
-    backgroundImage: "https://doki.assets.unthrottled.io/backgrounds/" + background.name,
+    icon: assetRoot + '/stickers/smol' + stickerPath.replace(new RegExp('\\\\', 'g'), '/') + '/' + background.name,
+    backgroundImage: assetRoot + "/backgrounds/wallpapers/" + background.name,
     backgroundImageAlignment: background.anchor,
-    backgroundImageStretchMode: 'fill',
+    backgroundImageStretchMode: 'uniformToFill',
     backgroundImageOpacity: 1 - (background.opacity / 100),
-    colorScheme: t.definition.name
+    opacity: 100 - background.opacity,
+    colorScheme: t.definition.name,
+    tabColor: t.definition.colors.keywordColor
   }
 }
 

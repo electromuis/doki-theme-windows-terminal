@@ -2,12 +2,13 @@
   "name": "base",
   "colors": {
     "background": "&baseBackground&",
-    "selectionBackground": "&searchBackground&",
+    "selectionBackground": "&selectionBackground&",
     "foreground": "&foregroundColor&",
+    "cursorColor": "&keywordColor&",
 
-    "black": "#0C0C0C",
+    "black": "&codeBlock&",
     "red": "&fileRed&",
-    "green": "#13A10E",
+    "green": "&breakpointActiveColor&",
     "yellow": "&fileYellow&",
     "blue": "&fileBlue&",
     "purple": "&filePurple&",
