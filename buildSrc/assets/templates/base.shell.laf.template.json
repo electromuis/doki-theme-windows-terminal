@@ -1,0 +1,8 @@
+{
+  "name": "base",
+
+  "tabColor": "&keywordColor&",
+  "icon": "&sticker&",
+  "backgroundImage": "&backgroundImage&",
+  "backgroundImageStretchMode": "uniformToFill"
+}

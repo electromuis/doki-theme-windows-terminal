@@ -1,4 +1,5 @@
 {
   "name": "PowerShell",
+  "extends": "base",
   "commandline": "powershell"
 }

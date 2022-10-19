@@ -1,4 +1,5 @@
 {
   "name": "CMD",
+  "extends": "base",
   "commandline": "cmd"
 }

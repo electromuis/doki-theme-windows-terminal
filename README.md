@@ -16,11 +16,21 @@ The Doki Theme: Windows Terminal
 
 1. Make sure you have Windows Terminal installed (https://apps.microsoft.com/store/detail/windows-terminal/9N0DX20HK701)
 1. Dowload the latest release of this repository
-1. Navitate to %LOCALAPPDATA% Microsoft\Windows Terminal\Fragments\Doki
-1. Copy Themes.json to the Doki folder
+1. Navitate to %LOCALAPPDATA% Microsoft\Windows Terminal\Fragments\Doki (Create if it doesn't exist)
+1. Copy Themes.json to the Fragments\Doki folder
 1. Copy your favourite waifu from folder of the shell you prefer to the Doki folder
 1. Launch Windows Terminal
 1. Set the Default Profile under settings
+
+## Oh My Posh
+
+Support for https://github.com/JanDeDobbeleer/oh-my-posh is also available, to install:
+
+1. Make sure you complted the above isntallation
+1. Install Oh My Posh: https://ohmyposh.dev/docs/installation/windows
+1. Copy the OMP folder from the downloaded release to the Windows Terminal Doki folder. So you should have: %LOCALAPPDATA% Microsoft\Windows Terminal\Fragments\Doki\OMP
+1. Copy the OMP version of the shell config to Fragments\Doki
+1. Launch and go
 
 ## Contributing
 

@@ -1,0 +1,5 @@
+{
+  "extends": "base",
+  "name": "PowerShell - OMP",
+  "commandline": "pwsh -Noexit -Command \"oh-my-posh init pwsh --config '%localappdata%/Microsoft/Windows Terminal/Fragments/Doki/OMP/%name%.omp.json' | Invoke-Expression\""
+}
